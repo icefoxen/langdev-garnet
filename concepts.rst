@@ -16,8 +16,9 @@ definitions).  However it is always possible to explicitly state the
 type of a variable, for the sake of clarity or for those cases where
 the compiler can't handle it or doesn't do what the programmer wants.
 
-There is also parametric polymorphism, the ability to define a type or
-function as being based on another, nonspecific type.  
+There are also parameterized types, the ability to define a type or
+function as being based on another, nonspecific type, such as being
+able to have an array of integers, an array of floats, etc.
 
 There's also going to be some kind of facility for subtyping and
 abstract types, such as defining "number" to be a member of/implement
@@ -112,6 +113,9 @@ Array, struct, tuple, union, slice, string
    Maybe if you really don't want to copy some of the relatively large
    value types such as options or slices, but that's getting into
    nit-picking territory...
+
+   But I am also extremely wary of saying "Well obviously there's no
+   use for X so we'll just remove it".
 
 
 Scope
