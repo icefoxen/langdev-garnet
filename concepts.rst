@@ -37,6 +37,18 @@ that binding...  Think about this!
    or variables-are-slots.  Basically are most values mutable, or
    immutable?  It's a good damn question.  
 
+.. todo::
+
+   Think about object system!  A paper on C# describes the CLR's type
+   system as not-entirely-static as it supports run-time type tests,
+   checked coercions, and reflection.  These are ALL nice things to
+   have, man!  And they *should*  be able to be done entirely
+   statically given that we can't create new types at runtime.  Though
+   it might also need objects to contain a pointer saying "This is my
+   type record", so.  A split system of flat structs with no extra
+   overhead  and heavyweight objects with vtables and type records is
+   sort of tempting now.
+
 Atomic types
 ~~~~~~~~~~~~
 
@@ -69,6 +81,37 @@ Compound types
 ~~~~~~~~~~~~~~
 
 Array, struct, tuple, union, slice, string
+
+.. note::
+
+   An idea that I ponder is having references be implicit for
+   compound types, such that ``var t : foo`` would actually be a reference to a
+   foo, and ``[]foo`` an array of references to foo's.  Then one would
+   have an "inline" operator that would change a reference to an
+   immediate value; let us use ``@``.
+
+   This is tempting because often you _do_ want reference semantics
+   for compound types, as demonstrated by Java and C# where classes are
+   reference types by definition, and the plethora of ``typedef *foo
+   foo_t`` statements in C code.
+
+   However this would make some weird inconsistencies which bother
+   me.  Namely, ``[]int`` would be (a slice referring to) an array of
+   immediate integers.  But ``[]foo`` would be an array of references
+   to foo's, while ``[]@foo`` would be an array of immediate foo's.
+   Then what happens when you write ``[]@int``?  It's more or less
+   meaningless; it might be ignored or it might be invalid.  But then
+   what if you want an array of references to integers, for whatever
+   reason?  You need some way to write ``[]^int`` anyway, so you
+   haven't even managed to remove ``^`` from the language.
+
+   But is there any real reason to have a reference to a lone ``int``,
+   or some other value type?  There is, if it is an out-value for a
+   function.  But then you can have an ``out`` specifier for a
+   function argument instead, which will do that job.  Anything else?
+   Maybe if you really don't want to copy some of the relatively large
+   value types such as options or slices, but that's getting into
+   nit-picking territory...
 
 
 Scope

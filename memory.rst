@@ -74,6 +74,14 @@ more special-case and need a little more thought.
    automatically, we *need* some type-extension method that lets us
    have every type define a finalizer if need be.
 
+   Or we need to do what C++ does and have the compiler check at
+   compile time every place a generic is used and generate the
+   appropriate code for it.
+
+   Or basically select one option of: value type without destructor,
+   reference type without destructor, value type with destructor,
+   reference type with destructor.  In that case.
+
 Memory safety
 -------------
 
