@@ -35,8 +35,16 @@ language on an Arduino, it is probably not appropriate.
 Notation
 --------
 
-This document uses an extended BNF grammer notation. "|" denotes
+This document uses an extended BNF grammer notation. ``|`` denotes
 alternation, nonterminals are written ``thus``, terminals are enclosed
 in "quotes".  Expressions that may be repeated zero or more times are
-enclosed in curly braces { }, and expressions that are repeated zero
-or one time are enclosed in square brackets [ ].
+enclosed in curly braces ``{ }``, and expressions that are repeated zero
+or one time are enclosed in square brackets ``[ ]``.
+
+.. sidebar:: Design notes
+
+   I have also left in sidebars describing in more detail *why* certain
+   design decisions were made; they are not necessary for understanding
+   the language, but are helpful, if only for me, for making the
+   language design more coherent.
+   

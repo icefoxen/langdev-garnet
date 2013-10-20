@@ -1,6 +1,22 @@
 Expressions
 ===========
 
+Literal values
+--------------
+
+* Integer
+* Float
+* Char
+* Unit?
+* Arrays
+* Slices?
+* Strings
+* Tuples
+* Structs
+* Unions
+* Functions
+
+
 Math & logic
 ------------
 
@@ -25,7 +41,7 @@ Structures
 Choice
 ------
 
-If and match
+If and match and null-coalescing
 
 Iteration
 ---------
