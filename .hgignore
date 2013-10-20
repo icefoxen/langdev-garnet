@@ -1,0 +1,5 @@
+syntax: glob
+# Specific file types to ignore.
+*~
+_build
+__pycache__
