@@ -125,7 +125,7 @@ deallocated).
 
    References being non-nullable was a bit of a sticking point,
    because nullable references are *useful*.  Not necessary, but
-   useful.  But the inclusion of the ``option`` type as a primitive
+   useful.  But the inclusion of the option type as a primitive
    nicely encompasses their functionality.
 
 Stack references are a special type of reference that CAN refer to
@@ -137,13 +137,17 @@ well:
   "escape" the stack into heap memory,
 * They can ONLY refer to items created in the current stack frame or
   previous stack frames; they can NOT refer to items on the heap, or
-  items allocated "further up" the stack.
+  items allocated "further up" the stack.  The compiler enforces this
+  invariant for you.  It may not be possible to enforce it 100%
+  accurately, in which case the compiler should be conservative and
+  force you to be too.  At worst, you are doing a little extra
+  copying.
 
-The purpose of all these bother is to prevent references to items in
+The purpose of all this bother is to prevent references to items in
 stack frames which then vanish when the function they are for returns.
 
 A function type is a first-class function.  It is unfortunately
-``not`` a closure, which is a function plus the local environment the
+*not* a closure, which is a function plus the local environment the
 function was defined in, because memory allocation for closures gets
 sort of awful pretty quickly.  So in practice it is just a bare
 function pointer.  A function that takes two integers and returns a
@@ -156,7 +160,7 @@ using union types, but is common enough to deserve some syntactic
 sugar of its own.  Thus ``?int`` represents a type that could be
 ``null`` or an ``int``.  
 
-.. sidebar:: Implementation note
+.. sidebar:: Implementation notes
 
    The option type generally is implemented like a union type, by
    adding an extra value that records whether or not the value is
@@ -214,7 +218,9 @@ The type "this has no type" is weird and awkward to think about.
    of.  Meanwhile, C's ``void`` is the bottom type, which every value
    is potentially a member of.  Do we need a bottom type?  Think about
    it.  Interestingly, in C#/Java-y systems, the bottom type is
-   ``object``, because anything can be casted to ``object``.
+   ``object``, because anything can be casted to ``object``.  In
+   Common Lisp, of course, ``t`` is the top type and ``nil`` the
+   bottom type...
 
 Lastly, we have the type ``pointer``.  A pointer is an untyped
 reference to raw memory.  Pointers may be (explicitly) converted to
@@ -317,7 +323,7 @@ Thus through slices you can handle arrays of variable or unknown
 length, dynamically allocate them, and so on.  ``[]int`` is a slice
 referring to an array of ``int``.  
 
-.. sidebar:: Implementation note
+.. sidebar:: Implementation notes
 
    Should slices be implemented as pointer+length, or pointer to
    beginning of array+pointer to end of array?  Hm.
@@ -357,6 +363,10 @@ another name outside of that block; you cannot "shadow" names.
 
 Namespaces
 ----------
+
+.. sidebar:: Design notes
+
+   This is pretty much entirely lifted from C#, without qualms.
 
 In Garnet, all top-level declarations declare new values and types in
 a *namespace*.  A namespace is simply a collection of values, types,
@@ -404,9 +414,6 @@ in.  The same namespace can be defined in multiple source files in a
 project and all names within that namespace are part of the same
 collection.  
 
-.. sidebar:: Design notes
-
-   This is pretty much entirely lifted from C#, without qualms.
 
 Exceptions
 ----------
@@ -417,7 +424,7 @@ Exceptions
    the commonly-used system provides a nice combination of power and
    usefulness.  It was very tempting to employ a more powerful error
    handling and recovery system such as Common Lisp's conditions, but
-   in the end that complicated the runtime too much and required more
+   that complicated the runtime too much and required more
    power in the execution model and compiler than I really felt
    comfortable with.  I also contemplated a simpler system of simply
    returning error values, with some syntactic sugar to make it nicer,
@@ -437,3 +444,17 @@ Exceptions
 
 Interfaces
 ----------
+
+Interfaces are basically traditional objects without the actual data
+attached.  Thus they are collections of functions defined upon a
+specific type, which define a new type.
+
+
+Run-time type information
+-------------------------
+
+Type traits: a struct for each type available at runtime, which has
+metadata about each type... size, at least, probably a name-to-number
+mapping for enums, stuff like that.  Look at C# more.
+
+A ``typeof`` operator.
