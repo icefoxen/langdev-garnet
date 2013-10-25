@@ -212,15 +212,86 @@ returns nothing actually returns one value of type ``unit``.  C's
 ``void`` type always pissed me off on a vague but fundamental level.
 The type "this has no type" is weird and awkward to think about.
 
+Subtype Mongling
+~~~~~~~~~~~~~~~~
+
 .. todo::
 
-   ``unit`` is the top type, which no value is potentially a member
-   of.  Meanwhile, C's ``void`` is the bottom type, which every value
-   is potentially a member of.  Do we need a bottom type?  Think about
-   it.  Interestingly, in C#/Java-y systems, the bottom type is
+   ``unit`` is the bottom type, which no value is potentially a member
+   of.  Meanwhile, C's ``void *`` is the top type, which every value
+   is potentially a member of.  Do we need a top type?  Think about
+   it.  Interestingly, in C#/Java-y systems, the top type is
    ``object``, because anything can be casted to ``object``.  In
    Common Lisp, of course, ``t`` is the top type and ``nil`` the
    bottom type...
+
+   Well we *need* varargs, because without them printf is awful.  And
+   we *need* some kind of strong typing for varargs, because printf 
+   (well, scanf) introduces potential for hilarious bugs and potential
+   security implications because it's not strongly typed.  So we
+   *need* a top type so anything can be fed into the printf
+   function.
+
+   So we *need* RTTI to make it so that you can get the right function
+   to print X where X is potentially any type.  (Amazing how such
+   complicated things come out of such simple requirements.)  
+
+   One *potential* way to handle it is The Modula 2 Dodge, where
+   printf takes an array of strings and we just have lots of functions
+   to convert things into strings.  Another might be The OCaml Dodge,
+   where printf takes a tuple and a bit of magic happens (I think it
+   involves specialized code generation with modules but don't know
+   for sure).  Or we could just have a top type, which would
+   probably consist of a fat pointer with a reference to an object and
+   a pointer/index to a type record.  But unless we want all pointers
+   to be fat pointers and all value types to have a reference to a
+   type record as well, we need a way to mongle data to and from these
+   fat pointers, either manually or (preferably) automatically.
+
+   But you can't have a subtyping system like objects or typeclasses
+   without *always* keeping that pointer to the type record around,
+   because if you have methods that can be overridden... say B
+   inherits from A.  A has a method A.foo() and B overrides it to make
+   B.foo().  You have a function that takes an A and gets
+   handed a B, and it calls B.foo(), and B's version of foo gets
+   called, not A's.  So that pointer there to an A actually points to
+   a B, and what foo() gets called must be able to be discovered at
+   runtime.
+
+   This is why in C++, methods are not virtual by default (like C#,
+   unlike Java) because it means that methods that can *never* be
+   overridden never need to be resolved at runtime via the object's
+   vtable.  That means if an object has no virtual methods (or, to use
+   Java terms, all final methods, or the object itself is marked
+   final) then you can represent them fully with a bare pointer and
+   some information that's possible to attain at compile time.  This
+   is why structs in C# can't inherit, too, but only implement
+   interfaces.  (XXX: But does this mean that interfaces are always
+   fully resolvable at compile time?  I THINK so...  Find out more!)
+
+   SO.  Possible ways of doing this:
+
+   * Have structs and objects be entirely separate, with different
+     properties, like C# does it.  Structs are bare and have no RTTI,
+     objects have RTTI.  This isn't *awful* but sort of irritates me.
+     C#'s semantics for struct vs. object in general aren't awful, but
+     do have some gotchas, and the main one might be that it's
+     impossible to put objects on the stack.  *BUT*, if "objects" can
+     extend a struct (add new members to it), then they *can't* be put
+     on the stack anyway without terrible things potentially
+     happening.  
+
+   * ONLY have what C# calls interfaces, on the assumption that they
+     are fully resolvable at compile time (ie, never need a vtable).
+     Need to think about this more.
+
+   * Compile-time magic?
+
+   * Tedious manual tagging and untagging of types, probably
+     involving some sort of new pointer type and functions/special
+     forms to convert between them and the broad invariant that it's
+     easy to convert fat to thin pointers and hard (or at least
+     potentially unsafe) to convert thin pointers to fat.
 
 Lastly, we have the type ``pointer``.  A pointer is an untyped
 reference to raw memory.  Pointers may be (explicitly) converted to
