@@ -516,10 +516,93 @@ Exceptions
 Interfaces
 ----------
 
-Interfaces are basically traditional objects without the actual data
-attached.  Thus they are collections of functions defined upon a
-specific type, which define a new type.
+An interface is, essentially, a new type defined from a set of
+specific functions (let's call them "methods") that operate on the
+a particular existing type.  They are much the same as interfaces in
+Java or C#, and provide a subtyping mechanism for Garnet that is 
+lightweight, flexible, and meshes well with existing types and
+functions.
 
+An *abstract* interface is defined by specifying a set of methods,
+either providing a method body for them or using the keyword
+``virtual`` to specify that the method is simply a type signature that
+must be provided when the interface is implemented::
+
+  interface Comparable =
+     -- Returns <0 if one item is less than the other,
+     -- >0 if it is greater, or 0 if they are the same.
+     virtual cmp(Comparable, Comparable : int)
+
+     def lt(a Comparable, b Comparable : bool)
+        cmp(a, b) < 0
+     end
+
+     def gt(a Comparable, b Comparable : bool)
+        cmp(a, b) > 0
+     end
+
+     def eq(a Comparable, b Comparable : bool)
+        cmp(a, b) = 0
+     end
+
+     -- For brevity we'll leave out lte() and gte()
+  end
+
+Any type can then implement a *concrete* interface by defining any
+virtual methods::
+
+  implement Comparable of int
+     def cmp(int a, int b : int)
+        if a > b then 1
+	elif a < b then -1
+	else 0
+	end
+      end
+   end
+
+And can then be used anywhere that the particular interface type is
+desired.  This particular example indicates that ``int`` is a subtype
+of ``Comparable``, thus you can use an ``int`` anywhere that a
+variable of type ``Comparable`` is expected::
+
+  var f Comparable = 10
+  var g Comparable = 20
+  f.lt(g) -- Returns true
+
+.. sidebar:: Implementation notes
+
+   The tricky part was really coming up with a subtyping system that
+   works but doesn't require tagging every single pointer or storing a
+   vtable in every single structure.  I *believe* fits the bill;
+   essentially, every variable that is an interface type is actually a
+   2-tuple containing the item and a pointer to a record containing
+   the virtual functions to implement the interface for the item's
+   type.  Then whenever we turn, say, an ``int`` into a
+   ``Comparable``, the compiler knows that you are working with an
+   ``int`` and passes in the right interface record, which then gets
+   kept around at runtime.  But if you ever want to make sure you
+   don't use that extra information, for purposes of efficiency or
+   memory layout or whatever, then you just don't use interface
+   types.  The overhead is literally zero in that case.
+
+   We could honestly implement C++/C#/Java style objects the same way,
+   but objects run into hazards.  If A is an object, and B inherits
+   from A and defines new members, then whenever we have an A on the
+   stack, and then assign a B to it, either we can't because the extra
+   members don't fit, or we slice those extra members off and **pray
+   to all that is holy** that B didn't override any of A's methods to
+   use those.  So in the end we can't in good concience have the
+   ability to extend objects that might be on the stack.  We could
+   define two entirely separate types of objects like C# does, one
+   that always lives on the heap and one that generally doesn't.  But
+   this is simpler, and seems to suffice without making our memory
+   model less uniform.
+
+   How the heck does Oberon handle this, anyway?
+
+Interfaces can inherit from each other to define subtypes.  All this
+means is that you are creating a new interface with the same or more
+methods than the parent.
 
 Run-time type information
 -------------------------
@@ -527,5 +610,13 @@ Run-time type information
 Type traits: a struct for each type available at runtime, which has
 metadata about each type... size, at least, probably a name-to-number
 mapping for enums, stuff like that.  Look at C# more.
+
+Note that this could easily be gotten as a method of the ``top``
+interface.  If the RTTI record for a type includes pointer layout,
+this would let you make a garbage collector just from introspection
+(though it'd be slowish).  It wouldn't be _perfect_ because it would
+still have issues with ints vs. pointers on the stack and in
+registers; it would still have to be conservative, but perhaps better
+than otherwise attainable.
 
 A ``typeof`` operator.
