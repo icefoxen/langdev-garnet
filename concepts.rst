@@ -516,17 +516,31 @@ Exceptions
 Interfaces
 ----------
 
-An interface is, essentially, a new type defined from a set of
-specific functions (let's call them "methods") that operate on the
-a particular existing type.  They are much the same as interfaces in
-Java or C#, and provide a subtyping mechanism for Garnet that is 
-lightweight, flexible, and meshes well with existing types and
-functions.
+An interface is a new type defined from a set of
+specific functions (methods) operating on a particular existing type.
+Interfaces allow the programmer to define types in terms of general
+behaviors, and then potentially have several data types that implement
+these behaviors, such as a ``Sequence`` data type being implemented
+via an array, linked list, or other underlying representation.
+Interfaces may also inherit from each other, thus defining a specific
+subtype from a more general supertype, allowing a certain amount of
+polymorphism.  A type may implement any number of interfaces as well.
 
-An *abstract* interface is defined by specifying a set of methods,
-either providing a method body for them or using the keyword
-``virtual`` to specify that the method is simply a type signature that
-must be provided when the interface is implemented::
+Interfaces in Garnet are much the same as interfaces in
+Java or C#, and provide a subtyping mechanism for Garnet that is 
+simple, flexible, and meshes well with existing types and
+functions.  Interfaces are also low overhead, requiring little in the
+way of extra storage and only simple method dispatch.
+
+An interface is defined by specifying a set of methods,
+either *virtual* methods which are to be filled in later when the
+interface is implemented for a particular type, or *concrete* methods
+with a function body.  This allows concrete methods to define uniform
+behavior in the case that there are one or two primitive operations
+that enable a host of other potential functionality.
+
+Here is an example of an interface defining simple comparison
+methods in terms of a to-be-defined ``cmp`` method::
 
   interface Comparable =
      -- Returns <0 if one item is less than the other,
@@ -548,10 +562,10 @@ must be provided when the interface is implemented::
      -- For brevity we'll leave out lte() and gte()
   end
 
-Any type can then implement a *concrete* interface by defining any
-virtual methods::
+Any type can then implement the ``Comparable`` interface by defining
+all of the virtual methods::
 
-  implement Comparable of int
+  implement Comparable<int>
      def cmp(int a, int b : int)
         if a > b then 1
 	elif a < b then -1
@@ -560,14 +574,22 @@ virtual methods::
       end
    end
 
-And can then be used anywhere that the particular interface type is
-desired.  This particular example indicates that ``int`` is a subtype
-of ``Comparable``, thus you can use an ``int`` anywhere that a
-variable of type ``Comparable`` is expected::
+So now any value of type ``int`` can be used anywhere that
+``Comparable`` type is expected::
 
   var f Comparable = 10
   var g Comparable = 20
   f.lt(g) -- Returns true
+
+This also demonstrates the method call syntax in ``f.lt(g)``, which is
+equivalent to ``lt(f,g)``.
+
+.. todo::
+
+   The method call syntax is ambiguous with a function pointer in a
+   struct, yo.  Does this matter?  Do we really want the 'this' for a
+   method to just be the first argument?  That's how Go does it, I
+   mean.  And Lua.  Think about it.
 
 .. sidebar:: Implementation notes
 
@@ -600,9 +622,30 @@ variable of type ``Comparable`` is expected::
 
    How the heck does Oberon handle this, anyway?
 
-Interfaces can inherit from each other to define subtypes.  All this
-means is that you are creating a new interface with the same or more
-methods than the parent.
+Interfaces can inherit from each other to define subtypes.  When
+interface ``B`` is defined as inheriting from ``A``, it contains all
+the methods of ``A`` and can add more of its own.  Thus in a game,
+``PlayerSpaceship`` and ``EnemySpaceship`` may both be interfaces
+inherited from ``PhysicsObject``, and thus have the same basic physics
+calculations applied to them despite being different types.::
+
+  interface PlayerSpaceship : PhysicsObject
+     virtual handleInput()
+  end
+
+  interface EnemySpaceship : PhysicsObject
+     virtual doAI()
+  end
+
+  def doPhysics(objs []PhysicsObject)
+     ... 
+  end
+
+
+.. todo::
+
+   Accessors might actually be really useful for this model.  Think
+   about it.  
 
 Run-time type information
 -------------------------
@@ -620,3 +663,12 @@ registers; it would still have to be conservative, but perhaps better
 than otherwise attainable.
 
 A ``typeof`` operator.
+
+
+Properties::
+
+  Type name
+  Size
+  Interfaces (linked list)
+  Pointer layout (maybe)
+  If an enum, functions to turn ints to/from it
