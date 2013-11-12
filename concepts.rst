@@ -468,7 +468,7 @@ another name outside of that block; you cannot "shadow" names.
 
    Objects with deconstructors that call automagically when they leave
    the current scope sounds sort of handy really.  Though also rather
-   C++-y...
+   C++-y.  But still really handy.
 
 Namespaces
 ----------
@@ -612,7 +612,7 @@ methods in terms of a to-be-defined ``cmp`` method::
 Any type can then implement the ``Comparable`` interface by defining
 all of the virtual methods::
 
-  implement Comparable<int>
+  implement Comparable on int
      def cmp(int a, int b : int)
         if a > b then 1
 	elif a < b then -1
@@ -761,7 +761,5 @@ information; you cannot turn a generic type into a non-generic type.
    There's two real ways to do this.  One is to have ``T`` always be a
    reference, the other is to basically compile a copy of the
    function/type for each specialization of the wossname.  That is,
-   OCaml style or C++ (and D?) style.
-
-
-
+   OCaml style or C++ (and D?) style.  C# essentially does it via
+   dynamic recompilation...
