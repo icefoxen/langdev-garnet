@@ -121,14 +121,15 @@ accessing memory-mapped device registers (at which point you need to
 be very precise and careful anyway).
 
 Dangling pointers can be solved by reference counting, but that's
-about the only way.
+about the only way.  Even then you have to be careful.
 
 Double-free's can't even be solved by reference counting.  While I
 would love some kind of magical pointer that automatically zero's
 itself when the object it is pointing to is deallocated, that's not
 really feasible.  A good testing suite using tools such as valgrind
 can detect when this happens though.  It's not even hard to do, it
-just makes the program run very slowly.
+just makes the program run very slowly.  This is the one memory
+corruption hole Garnet seems unable to cover.
 
 Pointers pointing into old stack frames can actually be solved by
 disallowing pointers from the heap into the stack.  This results in
@@ -149,3 +150,25 @@ lifetime analysis described above; it sounds really hopeful, but
 everything I've seen suggests that in practice it leads to either a
 very confusing explosion of pointer lifetime annotations, or very
 complex and inefficient automatic systems.
+
+.. todo::
+
+   Decide whether the Right Thing is to always require a default
+   value, or to institute a default value for you.  I suspect it will
+   be the first.
+
+   Also, memory leaks are still memory errors, yo.
+
+   One easy method of static analysis using the tools we already have
+   is basically to allow the creation of stack-like regions at
+   runtime...  These regions would be variable in size, so you could
+   say allocate one list node or 50 list nodes in them based on the
+   input of the user, but would all vanish when the function returns.
+
+   This behavior would be similar to C's alloca() but the addition of
+   $ pointers would make it easier for the compiler to ensure it's
+   safe and stuff.  See various arguments about alloca(), GNU
+   obstacks, etc.  However this would require a more general concept
+   of lifetime extensible beyond the stack; we'd basically be able to
+   define arbitrary scope blocks (probably using ``with``), freeing
+   stuff at the end of them.

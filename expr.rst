@@ -34,7 +34,11 @@ C# is real good here. It has several typecasts:
 It also has "expr is type" which returns true if "expr as type" will
 not return null. Handy. 
 
-A ``typeof`` operator is probably also a good idea.
+A ``typeof`` operator is probably also a good idea.  Or SOME way of
+getting a type record.
+
+is, as, (cast) (or cast<t>(wossname)?)
+
 
 Variable binding
 ----------------
@@ -65,3 +69,4 @@ Exception handling
 ------------------
 
 Try, throw, with...
+

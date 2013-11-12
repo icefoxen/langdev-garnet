@@ -107,6 +107,13 @@ Like integers, thre are a couple shortcuts:
 * ``single`` is a shortcut for ``float32``
 * ``double`` is a shortcut for ``float64``
 
+.. todo::
+
+   Vectors of ints and floats may be quite useful, as SIMD
+   operations.  16-bit floats may also be useful.  Are there
+   standardized 128-bit floats?
+   SIMD operations could be defined simply on tuples of numbers...
+
 Characters, type ``char``, are UTF-8 Unicode characters.
 
 References are a special type that refer to another value; ``^foo``
@@ -212,10 +219,9 @@ returns nothing actually returns one value of type ``unit``.  C's
 ``void`` type always pissed me off on a vague but fundamental level.
 The type "this has no type" is weird and awkward to think about.
 
-Subtype Mongling
-~~~~~~~~~~~~~~~~
-
 .. todo::
+
+   Subtype Mongling
 
    ``unit`` is the bottom type, which no value is potentially a member
    of.  Meanwhile, C's ``void *`` is the top type, which every value
@@ -240,12 +246,13 @@ Subtype Mongling
    printf takes an array of strings and we just have lots of functions
    to convert things into strings.  Another might be The OCaml Dodge,
    where printf takes a tuple and a bit of magic happens (I think it
-   involves specialized code generation with modules but don't know
-   for sure).  Or we could just have a top type, which would
+   involves the compiler decoding the format string and figuring out
+   what the types should be).  Or we could just have a top type, which would
    probably consist of a fat pointer with a reference to an object and
    a pointer/index to a type record.  But unless we want all pointers
    to be fat pointers and all value types to have a reference to a
-   type record as well, we need a way to mongle data to and from these
+   type record as well, or all values to have a pointer to a type
+   reference, we need a way to mongle data to and from these
    fat pointers, either manually or (preferably) automatically.
 
    But you can't have a subtyping system like objects or typeclasses
@@ -293,23 +300,40 @@ Subtype Mongling
      easy to convert fat to thin pointers and hard (or at least
      potentially unsafe) to convert thin pointers to fat.
 
-Lastly, we have the type ``pointer``.  A pointer is an untyped
-reference to raw memory.  Pointers may be (explicitly) converted to
-integers of the appropriate size for the platform, and vice versa.
-They may have pointer arithmatic done to them via the ``+`` and ``-``
-operators.  They are there for when it is necessary to access memory
-in this low-level fashion, such as performing memory-mapped I/O.  They
-are not a general-purpose tool.
+Lastly, we have the the pointer type, ``ptr<>``.  A pointer is a
+reference to raw memory that mostly evade the type-checker.
+Pointers can be created from a value with the ``ptrOf()`` function and
+can be dereferenced with the ``deref()`` function toretrieve the
+contents of memory essentially with no promise that it is 
+the type that you think it is.  ``setref()`` can be used to set the
+contents of pointed-to to a value
+For instance::
+
+  let f float = 10.5
+  let pf ptr<int> = ptrOf(f)
+  let i int = deref(pf)
+
+The above program will interpret the memory occupied by the floating
+point number ``f`` as an integer.  
+
+Furthermore, pointers may be explicitly converted to
+raw memory addresses and vice versa, may have pointer arithmatic done
+to them via the ``+`` and ``-``, which increment or decrement the
+address by a multiple of the size of the type the pointer thinks it is
+pointing at.  They are not bounds checked and thus
+can wander off into arbitrary parts of memory, which allows
+programmers to invoke the much-renowned undefined behavior::
+
+  let a [5]int = [1,2,3,4,5]
+  let pa ptr<int> = ptrOf(a)
+  pa <- pa + 3  -- pa now points to the a[3]
+  pa <- pa + 3  -- Now pointing off the end of the array
+  deref(pa)     -- Undefined
+  setref(pa, 5) -- More undefined
 
 .. todo::
 
-   It is worth considering whether pointers should be typed; a pointer
-   to an int32 conveys a lot more information than just a pointer.
-   They probably SHOULD be typed, since that tells the assembler
-   whether this load is a load-byte, a load-word, and so on.
-   Otherwise you default to load-word and have to either discard or
-   munge together words to get values of different sizes, which sounds
-   more irritating than it should be.
+   Figure out good names for the ptrOf() and deref() and setref() operators.  
 
 .. todo::
 
@@ -325,7 +349,13 @@ are not a general-purpose tool.
 
 .. todo::
 
-   SYMBOLS.
+   SYMBOLS.  But *can* you make symbols without dynamic allocation?
+   Well, THEORETICALLY, you could have a symbol table as a fixed
+   length array that gets filled at runtime, but that's silly.  The
+   goal is basically to turn a variable-length string into a
+   fixed-length number, but if we use some sort of hashing we'll have
+   collisions and need to resolve them and life gets silly.  Symbols
+   can be implemented as a library.
 
 Compound types
 ~~~~~~~~~~~~~~
@@ -345,7 +375,7 @@ semantics.  The compound types are:
 .. sidebar:: Design notes
 
    An idea that I ponder is having references be implicit for
-   compound types, such that ``var t : foo`` would actually be a reference to a
+   compound types, such that ``var t foo`` would actually be a reference to a
    foo, and ``[]foo`` an array of references to foo's.  Then one would
    have an "inline" operator that would change a reference to an
    immediate value; let us use ``@``.
@@ -383,8 +413,8 @@ semantics.  The compound types are:
    the only real choice, so, explicit pointers.
 
 Arrays are fixed-length sequences of values.  For instance,
-``[10]int`` is an array of 10 ``int``.  Arrays are indexed in the
-usual manner, such as ``foo[3]`` gets the 4th element from the array
+``[10]int`` is an array of 10 ``int``.  Arrays are zero-indexed with
+a C-like cyntax, such that ``foo[3]`` gets the 4th element from the array
 ``foo``.  All array accesses are bounds-checked at runtime, unless the
 compiler can prove it's unnecessary (or perhaps is told not to do such
 things).
@@ -408,13 +438,21 @@ Strings are simply arrays of ``char``.  Strings are immutable.
 Tuples are fixed-length sequences like arrays, except that not all the
 values in a tuple need to be the same length.  For instance, ``{int,
 float, char}`` denotes a 3-item sequence where the first item is an
-``int``, the second a ``float``, and the third a ``char``.
+``int``, the second a ``float``, and the third a ``char``.  You can
+reference the members of a tuple just like array members, so
+``someTuple[0]`` will return the first member of the variable
+``someTuple``.  Unlike arrays, tuples are immutable.
 
 Structs are just like tuples except they *must* have a type name
-specified and their elements have names as well.
+specified and their elements have names as well.  Structs are also
+mutable, just to keep you on your toes.
 
-Unions are a special type that allows the combination of multiple
-types.  
+Unions are a special type that allows the program to represent a
+variable that may be one of several different types, and discover
+which it is at runtime.  For this the union implicitly includes a
+field containing type information; a union member may also consist of
+a this tag alone with no additional information attached to it, which
+would be similar to an ``enum`` in C.  
 
 
 Scope
@@ -489,6 +527,8 @@ collection.
 Exceptions
 ----------
 
+Try, catch, finally, with XXX: Destructors
+
 .. sidebar:: Design notes
 
    Exceptions were another sticking point for a while, but in the end
@@ -512,6 +552,13 @@ Exceptions
    match choose the destination frame by matching the type of the
    thrown argument.  This detail may be
    worth further pondering.
+
+   Well, matching by type is basically the same as matching by label,
+   where the label is ``type-WHATEVER``.  So.  You'd have to match any
+   supertype of it as well, so that will be a little weird, but it's
+   doable; you just have to have a list of things you COULD match
+   against.
+
 
 Interfaces
 ----------
@@ -672,3 +719,49 @@ Properties::
   Interfaces (linked list)
   Pointer layout (maybe)
   If an enum, functions to turn ints to/from it
+
+
+Generic types
+-------------
+
+Garnet allows you to specify that a type or function based on a type
+that is unspecified in the declaration but rather declared where that
+function or type is used.  This deferred or generic type isusually 
+denoted ``T``.  The most familiar
+examples of generic types would be the built-in collections such as arrays; you can have an
+array of integers or an array of doubles, the type of the array
+depends on the type of the array members.  You can define your own
+types that have this property, for instance to make generic
+collections::
+
+  struct LinkedList<T> =
+     member R
+     next ?^LinkedList<T> 
+  end
+
+  let a LinkedList<int> = LinkedList { member = 10, next = null }
+  let b LinkedList<double> = LinkedList { member = 3.1415, next = null }
+
+You can also declare functions which take or return generic types,
+such as this one that returns the first member of an arbitrary 2-tuple::
+
+  def first<T1, T2>(tuple {T1, T2} : T1)
+     tuple[0]
+  end
+
+Note that unlike interfaces, generic types contain no run-time
+information; you cannot turn a generic type into a non-generic type.
+
+.. todo::
+
+   Look up what the C# spec says about these.
+
+.. sidebar:: Implementation notes
+
+   There's two real ways to do this.  One is to have ``T`` always be a
+   reference, the other is to basically compile a copy of the
+   function/type for each specialization of the wossname.  That is,
+   OCaml style or C++ (and D?) style.
+
+
+
