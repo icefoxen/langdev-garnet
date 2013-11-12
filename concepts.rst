@@ -435,6 +435,10 @@ Strings are simply arrays of ``char``.  Strings are immutable.
 
    Are strings slices of ``char``?
 
+.. todo::
+
+   2D arrays?
+
 Tuples are fixed-length sequences like arrays, except that not all the
 values in a tuple need to be the same length.  For instance, ``{int,
 float, char}`` denotes a 3-item sequence where the first item is an
@@ -523,6 +527,9 @@ in.  The same namespace can be defined in multiple source files in a
 project and all names within that namespace are part of the same
 collection.  
 
+.. todo::
+
+   Steal Go's init() functions?  Maybe.
 
 Exceptions
 ----------
@@ -637,6 +644,14 @@ equivalent to ``lt(f,g)``.
    struct, yo.  Does this matter?  Do we really want the 'this' for a
    method to just be the first argument?  That's how Go does it, I
    mean.  And Lua.  Think about it.
+   
+   XXX: Think about syntax for method calls!  Go methods *do*
+   associate a function with a particular type.
+
+   I sort of like Lua's foo:bar(arg) as shorthand for bar(foo, arg).
+   That's more or less what I was imagining up until now.  But it
+   looks like Go methods do some actual dispatch, which is something
+   different.  Think more about how these things interact...
 
 .. sidebar:: Implementation notes
 
