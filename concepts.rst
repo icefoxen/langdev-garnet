@@ -21,15 +21,9 @@ There are also parameterized types, the ability to define a type or
 function as being based on another, nonspecific type, such as being
 able to have an array of integers, an array of floats, etc.
 
-Garnet also includes some kind of object system or such.
-
-There's also going to be some kind of facility for subtyping and
-abstract types, such as defining "number" to be a member of/implement
-the interface "comparable", and thus having the option to write a
-function that does not require its inputs and outputs to be a specific
-type, but merely a type that implements "comparable".
-
-.. todo:: Rewrite the above and ponder object systems more.
+Garnet also has the facility to define type classes, that is,
+overloading of functions to specialize them to specific types.  This
+allows the definition of abstract types and subtype relationships.
 
 In Garnet, *names* are bound to *values*.  This binding is
 immutable???  It also does not necessarily imply a slot in memory for
@@ -40,18 +34,6 @@ that binding...  Think about this!
    FFS, figure out whether we're going to do names-as-binding-values
    or variables-are-slots.  Basically are most values mutable, or
    immutable?  It's a good damn question.  
-
-.. todo::
-
-   Think about object system!  A paper on C# describes the CLR's type
-   system as not-entirely-static as it supports run-time type tests,
-   checked coercions, and reflection.  These are ALL nice things to
-   have, man!  And they *should*  be able to be done entirely
-   statically given that we can't create new types at runtime.  Though
-   it might also need objects to contain a pointer saying "This is my
-   type record", so.  A split system of flat structs with no extra
-   overhead  and heavyweight objects with vtables and type records is
-   sort of tempting now.
 
 Garnet has two broad categories of types, atomic types and compound types.
 
