@@ -234,7 +234,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Garnet', 'Garnet Documentation',
-   'Simon Heath', 'Garnet', 'One line description of project.',
+   'Simon Heath', 'Garnet', 'The Garnet programming language.',
    'Miscellaneous'),
 ]
 

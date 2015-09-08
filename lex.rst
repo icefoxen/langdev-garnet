@@ -7,9 +7,12 @@ whitespace.
 
 Reserved words are::
 
-   def
+   foo
 
 
 Tokens
 ------
 
+
+Comments
+--------

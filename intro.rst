@@ -10,27 +10,10 @@ programs such as games, etc. It is essentially supposed to fill the
 niche currently occupied by C (and to some extent C++). C is real good
 for 1970-something. But we can do better now.
 
-To this end, simplicity and convenience (both of implementation and of
-use) are more important than offering every possible feature.  It
-should be complete and offer some of the niceness of modern
-programming languages, but when a design decision leads to a choice
-between a simple and a complex option, the simple one should generally
-be chosen.  Often the simple option is "omit the feature" or "let the
-programmer implement it themselves".
-
-While low-level code can be written in a number of languages,
-including crazy ones like C#, Haskell, and Go... most of the time this
-requires complex and ill-documented knowledge of the language's
-runtime and implementation, or special modifications to the
-implementation. This makes life harder. One of the goals of Garnet, as
-a relatively low-level language, is to make it easy to write low-level
-code. That means having a simpler implementation, where it is
-relatively easy to understand what is happening on the machine
-level. It also means having a lightweight runtime that can operate
-with low overhead and almost no infrastructure, so that you don't need
-to do a lot of work to be able to use the language on bare metal. As a
-rule of thumb... if a language feature makes it impossible to use this
-language on an Arduino, it is probably not appropriate. 
+The goal of Garnet is thus to be a system-level language, one that is
+simple to use and understand, convenient to use and powerful and safe
+enough to be actually useful.  Generally it seeks to have a useful
+small set of features rather than provide everything under the sun.
 
 Notation
 --------
@@ -48,3 +31,21 @@ or one time are enclosed in square brackets ``[ ]``.
    the language, but are helpful, if only for me, for making the
    language design more coherent.
    
+
+Roadmap
+-------
+
+For my own purposes, here's a useful little roadmap for things to do
+when designing and implementing this language:
+
+* Atomic types and basic expressions
+* Module system
+* Typedefs
+* Compound types
+* Pattern matching
+* Reference types
+* Type inference
+* Low level code/memory access
+* Subtypes & type inference
+* Multimethods?
+* Exceptions/non-local exits/returns
