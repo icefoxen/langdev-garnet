@@ -99,3 +99,38 @@ but, meh.
    seqaccess: `expr` "[" `expr` "]"
    structaccess: `expr` "." `idchain`
 
+
+Revision 1
+----------
+
+Step one, basic stuff
+
+Revision 2
+----------
+
+Step two, reference types
+
+Revision 3
+----------
+
+Step three, compound types and pattern matching
+
+Revision 4
+----------
+
+Step four, module system
+
+Revision 5
+----------
+
+Step five, generics and type inference
+
+Revision 6
+----------
+
+Step six, low level junk and memory access
+
+Revision 7
+----------
+
+Step seven, interfaces, multimethods?
