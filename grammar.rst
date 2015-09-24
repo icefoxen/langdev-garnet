@@ -155,6 +155,55 @@ Revision 2
 
 Step two, reference types
 
+
+
+.. productionlist:: 
+   program: {`declaration`}
+   declaration: `let_decl` |
+        : `function_decl` |
+        : `type_decl`
+   let_decl: "let" id `typespec` "=" `lit`
+   function_decl: "def" `id` "(" [`argdecllist`] [":" `typespec`] ")" {`expr`} "end"
+   type_decl: "type" `typespec` "=" `typedeclbody`
+   typedeclbody: `typespec` |
+   argdecllist: id `typespec` {"," id `typespec`}
+   expr: `binexpr` |
+      : `unaryexpr` |
+      : `letexpr` |
+      : `funcallexpr` |
+      : `value` |
+      : `ifexpr` |
+      : `whileexpr` |
+      : `forexpr` |
+      : `withexpr` |
+      : `assignexpr`
+      : `castexpr`
+   binexpr: `expr` `binop` `expr`
+   binop: "+" | "-" | "*" | "/" | "%" | "and" | "or" | "xor" | "|" |
+        : "&" | "^" | "==" | "/=" | "<" | ">" | "<=" | ">="
+   unaryexpr: `unaryop` `expr`
+   unaryop: "-" | "not" | "~"
+   letexpr: "let" `varbody`
+   varbody: id [`typespec`] "=" `expr`
+   funcallexpr: id "(" {`arglist`} ")"
+   arglist: `expr` {"," `expr`}
+   ifexpr: "if" `expr` "then" {`expr`} {"elif" {`expr`}} ["else" {`expr`}] "end"
+   whileexpr: "while" `expr` "do" {`expr`} "end"
+   forexpr: "for" [`expr`] ";" [`expr`] ";" [`expr`] "do" {`expr`} "end"
+   assignexpr: `lvalue` "<-" `expr`
+   lvalue: id
+   castexpr: `expr` "as" `typespec`
+   typespec: id | 
+        : `typeprefix` `typexpec
+        : `funcsignature`
+   typeprefix: "^" | "$"
+   funcsignature: "fun" `argtypes`
+   argtypes: "(" [`typespec` {"," `typespec`} [":" `typespec` ")"
+   lit: number | char | string
+   value: id | `lit`
+
+
+
 Revision 3
 ----------
 
