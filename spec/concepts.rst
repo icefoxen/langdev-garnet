@@ -26,19 +26,52 @@ overloading of functions to specialize them to specific types.  This
 allows the definition of abstract types and subtype relationships.
 
 In Garnet, *names* are bound to *values*.  This binding is
-immutable???  It also does not necessarily imply a slot in memory for
-that binding...  Think about this!  
+immutable?  It also does not necessarily imply a slot in memory for
+that binding.  However, it is possible to define variables, which as the name implies can be mutated at runtime.
 
-.. todo::
+Numbers
+~~~~~~~
 
-   FFS, figure out whether we're going to do names-as-binding-values
-   or variables-are-slots.  Basically are most values mutable, or
-   immutable?  It's a good damn question.  
+Booleans
+~~~~~~~~
 
-Garnet has two broad categories of types, atomic types and compound types.
+Arrays
+~~~~~~
+
+References
+~~~~~~~~~~
+
+Characters and strings
+~~~~~~~~~~~~~~~~~~~~~~
+
+Structures
+~~~~~~~~~~
 
 Atomic types
 ~~~~~~~~~~~~
+
+Functions
+~~~~~~~~~
+
+Variant types
+~~~~~~~~~~~~~
+
+Unit
+~~~~
+
+Pointers
+~~~~~~~~
+
+Generic types
+~~~~~~~~~~~~~
+
+.. todo::
+
+  Option, result, closures, SIMD vectors, slices, tuples
+
+.. todo::
+
+  SUBTYPING!  Let's see.  We can have normal classes/subclasses, Haskelly typeclasses, C#-y interfaces, Go-y protocols, whatever the hell Rust uses these days...
 
 Atomic types are generally small and, as the name suggests, are not
 composed of any sub-pieces besides bytes and bits.  They are thus
@@ -453,8 +486,7 @@ another name outside of that block; you cannot "shadow" names.
 .. todo::
 
    Objects with deconstructors that call automagically when they leave
-   the current scope sounds sort of handy really.  Though also rather
-   C++-y.  But still really handy.
+   the current scope sounds sort of handy really.
 
 Namespaces
 ----------

@@ -8,7 +8,7 @@ ocamlyacc := ocamlyacc
 ocamlflags := 
 
 # Order of this is significant!!!
-obj_bases := error lex parse garnetc
+obj_bases := ast 
 byte_objs := $(addsuffix .cmo,$(obj_bases)) 
 byte_interfaces := $(addsuffix .cmi,$(obj_bases)) 
 #native_objs := $(addsuffix .cmx,$(obj_bases))
@@ -48,7 +48,7 @@ clean:
 	-rm -f -- $(byte_prog) $(native_prog)
 	-rm -f -- $(byte_objs) $(native_prog_objs)
 	-rm -f -- depend.mk
-	-rm -f -- *.o *.cmi *.cmo
+	-rm -f -- *.o *.cmi *.cmo *.cmx
 	-rm -f -- *~
 	-rm -f -- *.a
 	-rm -f -- lex.ml
