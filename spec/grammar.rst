@@ -103,7 +103,7 @@ but, meh.
 Revision 1
 ----------
 
-Step one, the basic stuff.  Variables, functions, math, if's, loops, and that's it.
+The basic stuff.  Variables, functions, math, if's, loops, and that's it.
 
 
 .. productionlist:: 
@@ -153,9 +153,7 @@ Step one, the basic stuff.  Variables, functions, math, if's, loops, and that's 
 Revision 2
 ----------
 
-Step two, reference types
-
-
+Reference types
 
 .. productionlist:: 
    program: {`declaration`}
@@ -165,7 +163,7 @@ Step two, reference types
    let_decl: "let" id `typespec` "=" `lit`
    function_decl: "def" `id` "(" [`argdecllist`] [":" `typespec`] ")" {`expr`} "end"
    type_decl: "type" `typespec` "=" `typedeclbody`
-   typedeclbody: `typespec` |
+   typedeclbody: `typespec`
    argdecllist: id `typespec` {"," id `typespec`}
    expr: `binexpr` |
       : `unaryexpr` |
@@ -207,24 +205,33 @@ Step two, reference types
 Revision 3
 ----------
 
-Step three, compound types and pattern matching
+Compound types and pattern matching
+
+Arrays and slices should be a thing.  An array is the actual static array referred to directly, a slice is a a pointer and length to an array.
 
 Revision 4
 ----------
 
-Step four, module system
+Module system
 
 Revision 5
 ----------
 
-Step five, generics and type inference
+Generics and type inference
 
 Revision 6
 ----------
 
-Step six, low level junk and memory access
+Low level junk and memory access
 
 Revision 7
 ----------
 
-Step seven, interfaces, multimethods?
+Macros
+
+Revision 8
+----------
+
+Interfaces, multimethods?, objects?, typeclasses?, traits?  Some kind of subtyping system, but recall the goal is to keep things fairly generic and minimalistic.
+
+Ideally, it should be possible to implement these in Garnet using the macro system...  
