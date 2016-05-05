@@ -112,9 +112,9 @@ The basic stuff.  Variables, functions, math, if's, loops, and that's it.
         : `function_decl` |
         : `type_decl`
    let_decl: "let" id `typespec` "=" `lit`
-   function_decl: "def" `id` "(" [`argdecllist`] [":" `typespec`] ")" {`expr`} "end"
+   function_decl: "def" `id` "(" [`argdecllist`] ")" [":" `typespec`] {`expr`} "end"
    type_decl: "type" `typespec` "=" `typedeclbody`
-   typedeclbody: `typespec` |
+   typedeclbody: `typespec`
    argdecllist: id `typespec` {"," id `typespec`}
    expr: `binexpr` |
        : `unaryexpr` |
@@ -155,13 +155,22 @@ Revision 2
 
 Reference types
 
+Changes: Stack and heap references
+
+.. productionlist::
+   typespec: id | 
+        : `typeprefix` `typexpec
+        : `funcsignature`
+   typeprefix: "^" | "$"
+
+
 .. productionlist:: 
    program: {`declaration`}
    declaration: `let_decl` |
         : `function_decl` |
         : `type_decl`
    let_decl: "let" id `typespec` "=" `lit`
-   function_decl: "def" `id` "(" [`argdecllist`] [":" `typespec`] ")" {`expr`} "end"
+   function_decl: "def" `id` "(" [`argdecllist`] ")" [":" `typespec`]  {`expr`} "end"
    type_decl: "type" `typespec` "=" `typedeclbody`
    typedeclbody: `typespec`
    argdecllist: id `typespec` {"," id `typespec`}
@@ -209,20 +218,28 @@ Compound types and pattern matching
 
 Arrays and slices should be a thing.  An array is the actual static array referred to directly, a slice is a a pointer and length to an array.
 
+Changes: Array type, slice type, array reference expr and lvalue, struct type, struct field reference and lvalue, tuple type, tuple construction, tuple destructuring let.
+
 Revision 4
 ----------
 
 Module system
+
+Changes: module/namespace declarations, import, from x import y, module qualified names
 
 Revision 5
 ----------
 
 Generics and type inference
 
+Changes: Make type qualifiers on let optional, add generic qualifiers to typedefs, functions, type qualifiers...
+
 Revision 6
 ----------
 
 Low level junk and memory access
+
+Changes: Pointers, unsafe regions?
 
 Revision 7
 ----------
