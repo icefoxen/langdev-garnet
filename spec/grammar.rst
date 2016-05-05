@@ -8,11 +8,14 @@ exactly what they sound like.  I could define them down to characters,
 but, meh.
 
 .. todo::
+   Const-by-default? Consts vs. globals vs. readonly?
 
    XXX: Should consts be able to only be initialized to a value?
    What about things like array and struct literals?  If we make
    it so that values must always be initialized, we SHOULD have some
    nice shorthand for them...  Something like `var foo [100]int = 0`
+
+   Errors, exceptions, conditions...
 
 .. productionlist:: 
    program: {`declaration`}
@@ -155,7 +158,7 @@ Revision 2
 
 Reference types
 
-Changes: Stack and heap references
+Changes: Stack and heap references, function types, local functions, lambda's.
 
 .. productionlist::
    typespec: id | 
@@ -218,7 +221,7 @@ Compound types and pattern matching
 
 Arrays and slices should be a thing.  An array is the actual static array referred to directly, a slice is a a pointer and length to an array.
 
-Changes: Array type, slice type, array reference expr and lvalue, struct type, struct field reference and lvalue, tuple type, tuple construction, tuple destructuring let.
+Changes: Array type, slice type, array reference expr and lvalue, struct type, struct field reference and lvalue, tuple type, tuple literals, tuple destructuring let.  Array and struct literals.
 
 Revision 4
 ----------
