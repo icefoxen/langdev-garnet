@@ -1,3 +1,5 @@
+
+
 (* Simple starter AST for Garnet.
  * Building this before building the parser makes sense!
  * We can change the syntax all we want and still have this
