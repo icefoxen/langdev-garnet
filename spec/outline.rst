@@ -11,7 +11,10 @@ Modules
 C#-style dynamic namespaces?  How coupled should namespaces be to
 files/compilation units?  I feel like C# probably has the best way in
 having them completely decoupled, though we probably just want to have
-namespaces defined per-file instead of having them be a block.
+namespaces defined per-file instead of having them be a block.  But you could
+have multiple files that live in the same namespace.  Writing C# code,
+I have quite seldom seen people have multiple namespaces in the same
+file, so.
 
 ::
 
@@ -209,6 +212,24 @@ return a default value if none, and an ``?!`` or ``!!`` operator that
 will raise an exception (of some kind) if none.  (Not sure which
 syntax looks more startled; I think ``?!`` captures the gist of the
 operation better.)
+
+Struct ref
+~~~~~~~~~~
+
+::
+
+   x.member
+
+Array/slice ref
+~~~~~~~~~~~~~~~
+
+I'm a little annoyed that array and slice refs look exactly the same even though arrays and slices
+are very different things.  However, for now... oh well.  We might be able to refer to tuple
+members the same way anyway.
+
+::
+
+   array[index]
   
 Types
 -----
@@ -296,6 +317,17 @@ like this (F#-ish style)::
 
 With explicit types it's not necessary, but when we infer types it
 might be nice.
+
+Structs
+~~~~~~
+
+::
+   
+  type mystruct = struct
+    x: i32
+    y: someOtherType
+  end
+  let s:mystruct = mystruct{x=10, y=whatever}
 
 References (simple)
 ~~~~~~~~~~~~~~~~~~~
@@ -405,3 +437,8 @@ Increment/decrement syntax
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``+=`` and ``-=`` operators are sorta nice, especially in loops.
+
+Combine tuples and structs?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+They're really the same thing after all.
