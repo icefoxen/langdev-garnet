@@ -13,6 +13,15 @@ Contents:
 
    outline
 
+   intro
+   lex
+   decl
+   expr
+   memory
+   lib
+   grammar
+
+
 
 
 Indices and tables
