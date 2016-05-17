@@ -1,2 +1,4 @@
-Appendix 1: Grammar
--------------------
+Grammar
+-------
+
+Here we describe the grammar in disgusting detail.

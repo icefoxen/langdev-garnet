@@ -14,12 +14,17 @@ Contents:
    outline
 
    intro
+   concepts
    lex
-   decl
-   expr
+   types
+   namespaces
+   vars
+   decls
+   exprs
    memory
    lib
    grammar
+   tools
 
 
 
