@@ -48,10 +48,17 @@ gets turned into::
   format(x, [y,z])
 
 which is nicely simple.  This might be doable with macros.  A
-Python-style `*` operator might be nice, too.
+Python-style ``*`` operator might be nice, too.
 
 Global var/const
 ~~~~~~~~~~~~~~~~
+
+Globals, even immutable ones, get initialized at module load time.
+There's a few sticking points with regards to module ordering here;
+one way is to forbid them depending on anything in another module,
+another way is to not allow recursive module loading (which is often a
+bad idea anyway but gets tricky when we chunk several compilation
+units together into the same module).  Ponder this some.
 
 ::
    
@@ -92,7 +99,10 @@ Comma, semicolon or pipe as a separator here?
 
 Right now we're going with a semicolon.
 
-Might want to consider consistency with the struct definition syntax.
+Might want to consider consistency with the struct definition syntax;
+it looks weird to have separators/terminators here and not there.
+
+They're terminators, not separators.
 
 ::
 
@@ -107,6 +117,8 @@ Expressions
 
 Let
 ~~~
+
+You have to specify a default value.  No uninitialized vars.
 
 ::
    
@@ -204,10 +216,13 @@ Types
 Functions
 ~~~~~~~~~
 
+Named functions are just variables.
+
 ::
    
    let square:fn(i32):i32 = fn x -> x*x
-
+   def cube(x:i32):i32 = square(x)*x end
+   let somevar:fn(i32):i32 = cube
 
 Arrays
 ~~~~~~
@@ -216,18 +231,20 @@ Go uses ``[5]int``, Rust uses ``[int;5]``, C uses ``int[5]``...
 
 I guess the Go style makes the most sense, we have container, then the
 thing it contains.  I honestly sorta dislike it for this purpose, but
-we want it to be consistent.
+we want it to be consistent.  I'll get use to it.
 
-Arrays are a fixed size known at compile time (or maybe at least at runtime)::
+Arrays are a fixed size known at compile time::
   
   let somearray:[5]i32 = [1,2,3,4,5]
 
+It MIGHT be possible for their length to be discovered at runtime,
+but...  Probably best if not.
 
 Slices
 ~~~~~~
 
-Slices are variable size, their length is checked at runtime.  They
-basically consist of a length and a pointer to an array.
+Slices are references to an array; their length is checked at runtime.
+They basically consist of a length and a pointer to an array.
 
 Yes, I'm lifting this wholesale from Rust.
 
@@ -270,10 +287,11 @@ Unions
    let y:intOption = None
 
 
-To disambiguate, if necessary::
+To disambiguate, if necessary, we can instantiate members of a union
+like this (F#-ish style)::
 
-  let x:intOption = intOption.None
-  let y:floatOption = floatOption.None
+  let x:intOption = intOption:None
+  let y:floatOption = floatOption:None
 
 
 With explicit types it's not necessary, but when we infer types it
@@ -282,7 +300,13 @@ might be nice.
 References (simple)
 ~~~~~~~~~~~~~~~~~~~
 
-This is probably gonna change as time goes on.::
+These are NOT pointers.  You can't do pointer arithmatic to them.
+
+They can not be null.  If you have a null value, use an Option.
+
+How exactly these work is probably gonna change as time goes on.
+
+::
 
   let x:^int = 5
   let y:int = ^x
@@ -292,12 +316,17 @@ Here, the reference is mutable, what it refers to is not::
 
   let mut x:^int = &5
   let y:^int = x
-  x <- &6
-  print(^y) -- prints 6
+  x <- &6   -- Make x point somewhere new
+  print(^y) -- prints 5
   
 The address-of operator and the semantics of it are still undefined
 right now.  Also need to think more about the immutability and
-implications of it.
+implications of it.  That's a sticky field, and won't really get
+solved until we have some good way of dealing with the aliasing
+problem.
+
+Things to think about: unique references, shared (refcounted)
+references, region-bound references...
 
 Strings
 ~~~~~~~
@@ -342,7 +371,10 @@ Comments
 
    /* this style? */
    --[[ Maybe this style or something?
-   I don't really have a reason to not want C style for block comments...
+   I don't really have a reason to not want C style for block
+   comments...
+   But if I'm stealing Lua's comment style then being consistent with
+   it would be nice.
    ]]
 
 Block comments can be nested.
