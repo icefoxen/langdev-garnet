@@ -30,6 +30,7 @@ So my road map is to make fundamental features work:
 Then we can ponder more advanced features and see how we want them to
 fit together.  Things to investigate include:
 
+* Closures
 * Hygenic macro system
 * Dynamic dispatch/multimethods
 * Traits/interfaces/typeclasses
