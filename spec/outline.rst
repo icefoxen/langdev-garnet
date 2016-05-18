@@ -319,7 +319,7 @@ With explicit types it's not necessary, but when we infer types it
 might be nice.
 
 Structs
-~~~~~~
+~~~~~~~
 
 ::
    
