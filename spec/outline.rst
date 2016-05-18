@@ -334,31 +334,63 @@ References (simple)
 
 These are NOT pointers.  You can't do pointer arithmatic to them.
 
-They can not be null.  If you have a null value, use an Option.
+They can not be null.  If you have a nullable value, use an Option.
 
 How exactly these work is probably gonna change as time goes on.
 
+So we have two types of references: unique and shared.  This should sound familiar to C++ programmers, or Rust
+programmers really...
+
+Unique ref's are ``^``.  Shared ref's are ``~``
+
 ::
 
-  let x:^int = 5
-  let y:int = ^x
+  let x:^i32 = 5
+  let y:i32 = x    -- copies '5' into y
+  let z:^i32 = x   -- Moves the reference from x to z
+  x+y              -- Error, x no longer is valid
+
+  let x:~i32 = 5
+  let y:i32 = x    -- copies '5' into y
+  let z:~i32 = x   -- x and z now point to the same thing
+  x+y              -- returns 10
+
+Shared references are still safe; they use whatever combination of static analysis and automatic reference counting
+is necessary to make sure they are never deallocated early and (hopefully) always deallocated when the last shared
+references to the same thing goes away.
+
+However, loops are not guarenteed to terminate with reference counting, so we have weak pointers too.
+
+::
+
+  let x:~i32 = 5
+  let y:weak<i32> = x
+  y -- returns Some(5)
+  -- x goes out of scope one way or another
+  -- accessing y now returns None
+
+Now, we do RAII, so when something goes out of scope its destructor is called.  A unique ref's destructor destroys
+the object the ref points to.  A shared ref's destructor decrements the reference count, and if necessary destroys
+the object.  If there's a non-local exit of some kind (ie an exception), then destructors will be called as well.
+
+This negates the necessity for a 'with' structure or anything, we just use blocks.
+
+Need think about mutable vs. immutable references more, here's some notes.
 
 
 Here, the reference is mutable, what it refers to is not::
 
-  let mut x:^int = &5
-  let y:^int = x
-  x <- &6   -- Make x point somewhere new
-  print(^y) -- prints 5
+  let mut x:~int = 5
+  let y:~int = x
+  x <- 6   -- Make x point somewhere new
+  print(y) -- prints 5
   
-The address-of operator and the semantics of it are still undefined
-right now.  Also need to think more about the immutability and
+Need to think more about the immutability and
 implications of it.  That's a sticky field, and won't really get
 solved until we have some good way of dealing with the aliasing
 problem.
 
-Things to think about: unique references, shared (refcounted)
-references, region-bound references...
+Things to think about: region-bound references...
 
 Strings
 ~~~~~~~

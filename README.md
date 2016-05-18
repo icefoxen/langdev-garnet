@@ -30,6 +30,7 @@ So my road map is to make fundamental features work:
 Then we can ponder more advanced features and see how we want them to
 fit together.  Things to investigate include:
 
+* Integer overflow protection
 * Closures
 * Hygenic macro system
 * Dynamic dispatch/multimethods
@@ -61,6 +62,19 @@ actually pretty nice, it seems.
 If we are going to have some kind of stack analysis to ensure you can
 never return a pointer to value that then goes out of scope...  that
 is basically a subset of simple LIFO region analysis a la Cyclone.
+
+## Memory safety ponderments
+
+The hard ones are dynamic memory errors: danglign pointer, double free, memory leak
+
+Dangling pointers in the stack can be detected statically, if we restrict pointers to only pointing to current or
+earlier stack frames.
+
+Having unique pointers seems to work pretty well.  shared and weak pointers helps too.
+
+That, plus destructors, seems to do the trick I think.  When something goes out of scope, if it's a unique pointer,
+then we know it's, well, unique, and the thing it is pointing to can go away.  If it's a shared pointer, then the
+refcounting happens.
 
 # Compiler
 
