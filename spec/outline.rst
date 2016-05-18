@@ -161,7 +161,6 @@ While
 
 ::
 
-
    while foo do
       bar
    end
@@ -241,7 +240,7 @@ Named functions are just variables.
 
 ::
    
-   let square:fn(i32):i32 = fn x -> x*x
+   let square:fn(i32):i32 = fn x -> x*x end
    def cube(x:i32):i32 = square(x)*x end
    let somevar:fn(i32):i32 = cube
 
@@ -311,8 +310,8 @@ Unions
 To disambiguate, if necessary, we can instantiate members of a union
 like this (F#-ish style)::
 
-  let x:intOption = intOption:None
-  let y:floatOption = floatOption:None
+  let x:intOption = intOption.None
+  let y:floatOption = floatOption.None
 
 
 With explicit types it's not necessary, but when we infer types it
