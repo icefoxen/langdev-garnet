@@ -329,14 +329,15 @@ Structs
   end
   let s:mystruct = mystruct{x=10, y=whatever}
 
-References (simple)
-~~~~~~~~~~~~~~~~~~~
+References
+~~~~~~~~~~
 
 These are NOT pointers.  You can't do pointer arithmatic to them.
 
 They can not be null.  If you have a nullable value, use an Option.
 
-How exactly these work is probably gonna change as time goes on.
+How exactly these work is probably gonna change as time goes on.  See http://www.stroustrup.com/resource-model.pdf
+...
 
 So we have two types of references: unique and shared.  This should sound familiar to C++ programmers, or Rust
 programmers really...
