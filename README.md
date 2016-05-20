@@ -28,25 +28,27 @@ So my road map is to make fundamental features work:
 * Module/namespace system
 
 Then we can ponder more advanced features and see how we want them to
-fit together.  Things to investigate include:
+fit together.  Things that will almost certainly be put in include:
 
 * Integer overflow protection
 * Closures
-* Hygenic macro system
-* Dynamic dispatch/multimethods
-* Traits/interfaces/typeclasses
-* Lifetime analysis/regions
-* Fancy pointer types (unique pointers, refcounted pointers, etc)
 * Exceptions/conditions/other stack unwinding mechanisms (require
   destructors)
-* Closures
+* Hygenic macro system
+* Traits/interfaces/typeclasses
+* Fancy pointer types (unique pointers, refcounted pointers, etc)
+* Lifetime analysis/regions
+* C interface
+
+Things I am not so sure about include:
+
+* Dynamic dispatch/multimethods
 * Objects/subtypes/struct extension
 * Operator definition
 * Function arg overloading
 * Null-coalescing operator (maybe definable if we can define
 operators)
 * RTTI/introspection
-* C interface
 
 ## Considerations
 

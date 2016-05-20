@@ -1,5 +1,5 @@
 Building the docs requires sphinx3, and the alabaster theme
 
-sudo aptitude install python3-sphinx
-sudo pip3 install alabaster
+sudo aptitude install python3-sphinx python3-alabaster
+#sudo pip3 install alabaster
 make html
