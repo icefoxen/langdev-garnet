@@ -40,14 +40,17 @@ fit together.  Things that will almost certainly be put in include:
 * Lifetime analysis/regions
 * C interface
 
+
+
 Things I am not so sure about include:
 
 * Dynamic dispatch/multimethods
-* Objects/subtypes/struct extension
-* Operator definition
-* Function arg overloading
-* Null-coalescing operator (maybe definable if we can define
-operators)
+* Dynamic dispatch/multimethods (multimethods are complex, traits can do dynamic dispatch)
+* Objects/subtypes/struct extension (we don't really need objects if we have traits; struct
+extension is sometimes useful but sometimes not...  hmm.)
+* Operator definition (syntactic sugar, we can leave it out)
+* Function arg overloading (syntactic sugar, we can leave it out)
+* Null-coalescing operator (maybe definable if we can define operators)
 * RTTI/introspection
 
 ## Considerations
